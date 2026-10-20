@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BURGER - Menú Gourmet & Pedidos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                        },
+                        darkbg: '#050505',
+                        darkcard: '#121212',
+                        darkaccent: '#1e1e1e'
+                    },
+                    fontFamily: {
+                        title: ['Cinzel', 'serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #f3f4f6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .title-font {
+            font-family: 'Cinzel', serif;
+        }
+        
+        /* Efecto de texto brillante blanco neón para PROMOCIÓN */
+        .promo-glow {
+            color: #ffffff;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-shadow: 
+                0 0 5px #ffffff,
+                0 0 10px #ffffff,
+                0 0 20px #ffffff,
+                0 0 30px #eab308,
+                0 0 40px #eab308;
+            animation: promoPulse 1.8s infinite alternate;
+        }
+
+        @keyframes promoPulse {
+            0% {
+                text-shadow: 0 0 4px #ffffff, 0 0 10px #ffffff, 0 0 18px #eab308;
+            }
+            100% {
+                text-shadow: 0 0 8px #ffffff, 0 0 18px #ffffff, 0 0 28px #ffffff, 0 0 38px #eab308;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #262626;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #eab308;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-black">
+
+    <!-- Encabezado / Navbar -->
+    <header class="sticky top-0 z-40 bg-black/95 backdrop-blur-md border-b border-gold-500/30">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3">
+                <i class="fa-solid fa-hamburger text-3xl text-gold-500"></i>
+                <span class="title-font text-3xl md:text-4xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-yellow-200 to-gold-600">
+                    BURGER
+                </span>
+            </a>
+            
+            <button id="cart-btn" onclick="toggleCartModal()" class="relative bg-neutral-900 hover:bg-neutral-800 border border-gold-500/40 px-4 py-2 rounded-full flex items-center gap-2 transition text-gold-400">
+                <i class="fa-solid fa-cart-shopping text-lg"></i>
+                <span class="font-bold hidden sm:inline">Tu Pedido</span>
+                <span id="cart-count" class="bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Banner Principal -->
+    <section class="relative bg-gradient-to-b from-neutral-900 via-black to-black py-8 px-4 border-b border-neutral-800">
+        <div class="max-w-4xl mx-auto text-center space-y-3">
+            <span class="text-xs uppercase tracking-widest text-gold-500 font-bold bg-gold-500/10 px-3 py-1 rounded-full border border-gold-500/20">
+                Menú Gourmet
+            </span>
+            <h1 class="title-font text-3xl md:text-5xl font-black text-white">
+                NUESTRAS <span class="text-gold-500">HAMBURGUESAS</span>
+            </h1>
+            <p class="text-gray-400 text-xs md:text-sm max-w-xl mx-auto">
+                Selecciona tu hamburguesa para elegir qué ingredientes poner o quitar antes de enviar tu pedido por WhatsApp.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contenido Principal / Menú -->
+    <main class="max-w-6xl mx-auto px-4 py-10 flex-grow w-full">
+        <div class="flex justify-between items-end mb-8 border-b border-neutral-800 pb-4">
+            <div>
+                <h2 class="title-font text-2xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-utensils text-gold-500 text-lg"></i> Elige tu Hamburguesa
+                </h2>
+                <p class="text-gray-400 text-xs">Haz clic para personalizar los ingredientes</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- PRODUCTO 1: Sencilla UGM -->
+            <div onclick="openCustomizeModal('ugm')" class="group bg-darkcard rounded-2xl border border-neutral-800 hover:border-gold-500/60 transition duration-300 overflow-hidden cursor-pointer flex flex-col justify-between hover:-translate-y-1 relative shadow-xl">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-neutral-900">
+                        <div style="position: relative; width: 100%; height: 100%; overflow: hidden;">
+                            <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0; margin: 0; pointer-events: none;"
+                                src="https://www.canva.com/design/DAHYgxS5pV0/UDLv-L92HFEZrK3h7gA6wg/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
+                            </iframe>
+                        </div>
+                        <div class="absolute top-3 right-3 bg-black/90 border border-white/60 px-3 py-1 rounded-full backdrop-blur-md shadow-2xl z-10">
+                            <span class="text-xs uppercase promo-glow">PROMOCIÓN</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="title-font text-xl font-bold text-white group-hover:text-gold-400 transition">1. Sencilla UGM</h3>
+                            <span class="text-2xl font-black text-gold-500">$70</span>
+                        </div>
+                        <p class="text-gray-400 text-xs leading-relaxed mb-4">
+                            Sencilla clásica en oferta especial con jugosa carne de res, queso amarillo, lechuga, tomate y cebolla.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 pb-5 pt-0">
+                    <button class="w-full bg-neutral-900 group-hover:bg-gold-500 group-hover:text-black text-gold-400 font-bold py-2.5 px-4 rounded-xl border border-gold-500/30 transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-sliders"></i> Personalizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- PRODUCTO 2: Burger Personalizada -->
+            <div onclick="openCustomizeModal('custom')" class="group bg-darkcard rounded-2xl border border-neutral-800 hover:border-gold-500/60 transition duration-300 overflow-hidden cursor-pointer flex flex-col justify-between hover:-translate-y-1 shadow-xl">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-neutral-900">
+                        <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80" 
+                             alt="Burger Personalizada" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                        <span class="absolute top-3 right-3 bg-gold-500 text-black text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md z-10">
+                            Al Gusto
+                        </span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="title-font text-xl font-bold text-white group-hover:text-gold-400 transition">2. Personalizada</h3>
+                            <span class="text-2xl font-black text-gold-500">$90</span>
+                        </div>
+                        <p class="text-gray-400 text-xs leading-relaxed mb-4">
+                            Arma tu hamburguesa a tu gusto desde cero con la libertad de elegir cada ingrediente, salsa y extra.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 pb-5 pt-0">
+                    <button class="w-full bg-neutral-900 group-hover:bg-gold-500 group-hover:text-black text-gold-400 font-bold py-2.5 px-4 rounded-xl border border-gold-500/30 transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Armar al Gusto
+                    </button>
+                </div>
+            </div>
+
+            <!-- PRODUCTO 3: Burger Black (Con nuevo Canva Banner fondo rojo) -->
+            <div onclick="openCustomizeModal('black')" class="group bg-darkcard rounded-2xl border border-neutral-800 hover:border-gold-500/60 transition duration-300 overflow-hidden cursor-pointer flex flex-col justify-between hover:-translate-y-1 shadow-xl">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-neutral-900">
+                        <!-- Canva Embed: Banner hamburguesa fondo rojo -->
+                        <div style="position: relative; width: 100%; height: 100%; overflow: hidden;">
+                            <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0; margin: 0; pointer-events: none;"
+                                src="https://www.canva.com/design/DAHYg1RhIxA/vTneoOXBQcOsGTFKDE74qA/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
+                            </iframe>
+                        </div>
+                        <span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md uppercase z-10">
+                            2 Carnes
+                        </span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="title-font text-xl font-bold text-white group-hover:text-gold-400 transition">3. Burger Black</h3>
+                            <span class="text-2xl font-black text-gold-500">$110</span>
+                        </div>
+                        <p class="text-gray-400 text-xs leading-relaxed mb-4">
+                            Doble carne jugosa, queso derretido doble, lechuga, tomate y cebolla.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 pb-5 pt-0">
+                    <button class="w-full bg-neutral-900 group-hover:bg-gold-500 group-hover:text-black text-gold-400 font-bold py-2.5 px-4 rounded-xl border border-gold-500/30 transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-sliders"></i> Personalizar
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-black border-t border-neutral-800 py-6 text-center text-gray-500 text-xs">
+        <div class="max-w-6xl mx-auto px-4 space-y-2">
+            <p class="title-font text-gold-500 font-bold text-sm tracking-wider">BURGER GOURMET</p>
+            <p>Pedidos directos por WhatsApp al: <span class="text-white font-bold bg-neutral-900 px-2.5 py-1 rounded border border-neutral-800">7822617627</span></p>
+            <p class="text-neutral-600">&copy; BURGER. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DE PERSONALIZACIÓN DE HAMBURGUESA -->
+    <div id="customize-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-darkcard border border-neutral-800 rounded-2xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative">
+            <button onclick="closeCustomizeModal()" class="absolute top-3 right-3 bg-red-600 hover:bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center z-30 font-extrabold text-xl shadow-2xl border-2 border-white/20 transition transform hover:scale-110 focus:outline-none" title="Salir de la hamburguesa">
+                ✕
+            </button>
+
+            <div class="p-5 border-b border-neutral-800 bg-neutral-900/90 pr-16">
+                <h3 id="modal-title" class="title-font text-2xl font-bold text-white">Personalizar Hamburguesa</h3>
+                <p id="modal-subtitle" class="text-xs text-gold-500 font-medium">Pon o quita los ingredientes que desees</p>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 flex-grow" id="modal-content"></div>
+
+            <div class="px-6 pb-4">
+                <label class="block text-xs font-bold text-gray-400 mb-1">Notas especiales para esta hamburguesa:</label>
+                <input type="text" id="modal-notes" placeholder="Ej. Sin cebolla muy cocida, término de carne, etc." class="w-full bg-black border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-500">
+            </div>
+
+            <div class="p-4 border-t border-neutral-800 bg-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-gray-400 font-bold">Cantidad:</span>
+                    <div class="flex items-center border border-neutral-700 rounded-lg bg-black">
+                        <button onclick="changeModalQty(-1)" class="px-3.5 py-1 text-gold-500 hover:bg-neutral-800 rounded-l-lg font-extrabold text-lg">-</button>
+                        <span id="modal-qty" class="px-3 font-bold text-white text-base">1</span>
+                        <button onclick="changeModalQty(1)" class="px-3.5 py-1 text-gold-500 hover:bg-neutral-800 rounded-r-lg font-extrabold text-lg">+</button>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 w-full sm:w-auto">
+                    <div class="text-right flex-grow sm:flex-grow-0">
+                        <span class="text-xs text-gray-400 block">Subtotal</span>
+                        <span id="modal-price" class="text-2xl font-extrabold text-gold-500">$0.00</span>
+                    </div>
+                    <button onclick="addCurrentToCart()" class="flex-1 sm:flex-none bg-gold-500 hover:bg-gold-400 text-black font-bold px-6 py-3 rounded-xl transition shadow-lg text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cart-plus text-base"></i> Agregar al Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL / DRAWER DEL CARRITO -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex justify-end hidden">
+        <div class="bg-darkcard border-l border-neutral-800 w-full max-w-md h-full flex flex-col shadow-2xl relative">
+            <div class="p-4 border-b border-neutral-800 flex justify-between items-center bg-neutral-900 pr-14">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-shopping-bag text-gold-500 text-lg"></i>
+                    <h3 class="title-font text-xl font-bold text-white">Resumen del Pedido</h3>
+                </div>
+            </div>
+
+            <button onclick="toggleCartModal()" class="absolute top-3 right-3 bg-red-600 hover:bg-red-500 text-white w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-lg shadow-lg border border-white/20 transition" title="Cerrar carrito">
+                ✕
+            </button>
+
+            <div id="cart-items" class="p-4 overflow-y-auto space-y-3 flex-grow"></div>
+
+            <div class="p-4 border-t border-neutral-800 bg-neutral-900/90 space-y-3">
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gold-500">Datos para la Entrega</h4>
+                    <input type="text" id="client-name" placeholder="Nombre completo *" class="w-full bg-black border border-neutral-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-gold-500">
+                    <textarea id="client-address" rows="2" placeholder="Dirección completa de entrega *" class="w-full bg-black border border-neutral-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-gold-500"></textarea>
+                </div>
+
+                <div class="pt-2 border-t border-neutral-800 flex justify-between text-lg font-bold text-white">
+                    <span>Total Pedido:</span>
+                    <span id="cart-total" class="text-gold-500 text-xl font-black">$0.00</span>
+                </div>
+
+                <button onclick="sendWhatsAppOrder()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-xl text-base">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i> Enviar Pedido por WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const BASE_INGREDIENTS = ['Lechuga', 'Tomate', 'Cebolla', 'Carne de res', 'Queso amarillo'];
+        
+        const EXTRAS_OPTIONS = [
+            { name: 'Extra Queso', price: 15 },
+            { name: 'Extra Barvikui', price: 10 },
+            { name: 'Mostasa', price: 0 },
+            { name: 'Capsup', price: 0 }
+        ];
+
+        const PRODUCTS = {
+            ugm: {
+                id: 'ugm',
+                name: '1. Sencilla UGM',
+                basePrice: 70,
+                baseIngredients: [...BASE_INGREDIENTS]
+            },
+            custom: {
+                id: 'custom',
+                name: '2. Burger Personalizada',
+                basePrice: 90,
+                baseIngredients: [...BASE_INGREDIENTS]
+            },
+            black: {
+                id: 'black',
+                name: '3. Burger Black',
+                basePrice: 110,
+                baseIngredients: ['Lechuga', 'Tomate', 'Cebolla', 'Carne de res (Doble)', 'Queso amarillo (Doble)']
+            }
+        };
+
+        let currentProduct = null;
+        let currentModalQty = 1;
+        let selectedBaseIngredients = [];
+        let selectedExtras = [];
+        let cart = [];
+
+        function openCustomizeModal(productId) {
+            currentProduct = PRODUCTS[productId];
+            currentModalQty = 1;
+            selectedBaseIngredients = [...currentProduct.baseIngredients];
+            selectedExtras = [];
+            document.getElementById('modal-notes').value = '';
+
+            document.getElementById('modal-title').innerText = currentProduct.name;
+            document.getElementById('modal-qty').innerText = '1';
+
+            renderModalOptions();
+            updateModalPrice();
+            document.getElementById('customize-modal').classList.remove('hidden');
+        }
+
+        function closeCustomizeModal() {
+            document.getElementById('customize-modal').classList.add('hidden');
+        }
+
+        function renderModalOptions() {
+            const container = document.getElementById('modal-content');
+            
+            let html = `
+                <div>
+                    <h4 class="text-xs font-extrabold text-gold-500 uppercase tracking-wider mb-3">
+                        <i class="fa-solid fa-list-check"></i> Ingredientes Base (Marca / Desmarca):
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            `;
+
+            BASE_INGREDIENTS.forEach(ing => {
+                let isChecked = selectedBaseIngredients.some(i => i.startsWith(ing));
+                if (currentProduct.id === 'black' && (ing === 'Carne de res' || ing === 'Queso amarillo')) {
+                    isChecked = selectedBaseIngredients.some(i => i.includes(ing));
+                }
+
+                html += `
+                    <label class="flex items-center gap-3 p-3 bg-black rounded-xl border border-neutral-800 cursor-pointer hover:border-gold-500/40 transition">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleBaseIngredient('${ing}', this.checked)" class="w-4 h-4 accent-gold-500 rounded">
+                        <span class="text-sm text-gray-200 font-medium">${ing}</span>
+                    </label>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xs font-extrabold text-gold-500 uppercase tracking-wider mb-3">
+                        <i class="fa-solid fa-plus-circle"></i> Salsas y Extras:
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            `;
+
+            EXTRAS_OPTIONS.forEach(ext => {
+                const isChecked = selectedExtras.some(e => e.name === ext.name);
+                html += `
+                    <label class="flex items-center justify-between p-3 bg-black rounded-xl border border-neutral-800 cursor-pointer hover:border-gold-500/40 transition">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleExtra('${ext.name}', ${ext.price}, this.checked)" class="w-4 h-4 accent-gold-500 rounded">
+                            <span class="text-sm text-gray-200 font-medium">${ext.name}</span>
+                        </div>
+                        <span class="text-xs font-bold text-gold-500">${ext.price > 0 ? '+$' + ext.price : 'Gratis'}</span>
+                    </label>
+                `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        function toggleBaseIngredient(ingredient, isChecked) {
+            let actualName = ingredient;
+            if (currentProduct.id === 'black') {
+                if (ingredient === 'Carne de res') actualName = 'Carne de res (Doble)';
+                if (ingredient === 'Queso amarillo') actualName = 'Queso amarillo (Doble)';
+            }
+
+            if (isChecked) {
+                if (!selectedBaseIngredients.includes(actualName)) {
+                    selectedBaseIngredients.push(actualName);
+                }
+            } else {
+                selectedBaseIngredients = selectedBaseIngredients.filter(i => i !== actualName && i !== ingredient);
+            }
+        }
+
+        function toggleExtra(name, price, isChecked) {
+            if (isChecked) {
+                selectedExtras.push({ name, price });
+            } else {
+                selectedExtras = selectedExtras.filter(e => e.name !== name);
+            }
+            updateModalPrice();
+        }
+
+        function changeModalQty(delta) {
+            currentModalQty = Math.max(1, currentModalQty + delta);
+            document.getElementById('modal-qty').innerText = currentModalQty;
+            updateModalPrice();
+        }
+
+        function updateModalPrice() {
+            let unitPrice = currentProduct.basePrice;
+            selectedExtras.forEach(e => unitPrice += e.price);
+
+            const total = unitPrice * currentModalQty;
+            document.getElementById('modal-price').innerText = `$${total.toFixed(2)}`;
+        }
+
+        function addCurrentToCart() {
+            let unitPrice = currentProduct.basePrice;
+            selectedExtras.forEach(e => unitPrice += e.price);
+
+            let details = [];
+            const defaultList = currentProduct.baseIngredients;
+            const removed = defaultList.filter(i => {
+                if (i.includes('Carne de res')) return !selectedBaseIngredients.some(s => s.includes('Carne'));
+                if (i.includes('Queso amarillo')) return !selectedBaseIngredients.some(s => s.includes('Queso'));
+                return !selectedBaseIngredients.includes(i);
+            });
+
+            if (removed.length > 0) {
+                details.push(`❌ Sin: ${removed.join(', ')}`);
+            } else {
+                details.push(`✅ Con todos sus ingredientes base`);
+            }
+
+            if (selectedExtras.length > 0) {
+                details.push(`➕ Extras/Salsas: ${selectedExtras.map(e => e.name).join(', ')}`);
+            }
+
+            const notes = document.getElementById('modal-notes').value.trim();
+            if (notes) {
+                details.push(`📝 Nota: ${notes}`);
+            }
+
+            cart.push({
+                id: Date.now(),
+                title: currentProduct.name,
+                qty: currentModalQty,
+                unitPrice: unitPrice,
+                totalPrice: unitPrice * currentModalQty,
+                details: details
+            });
+
+            updateCartUI();
+            closeCustomizeModal();
+            toggleCartModal(true);
+        }
+
+        function toggleCartModal(forceOpen = false) {
+            const modal = document.getElementById('cart-modal');
+            if (forceOpen) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.toggle('hidden');
+            }
+        }
+
+        function removeCartItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            
+            let totalQty = 0;
+            let totalPrice = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500 space-y-2">
+                        <i class="fa-solid fa-basket-shopping text-4xl text-neutral-800"></i>
+                        <p class="text-xs">No has agregado hamburguesas a tu pedido.</p>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                cart.forEach((item, index) => {
+                    totalQty += item.qty;
+                    totalPrice += item.totalPrice;
+
+                    html += `
+                        <div class="bg-black border border-neutral-800 p-3.5 rounded-xl space-y-1.5 relative shadow-md">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h5 class="font-bold text-white text-sm">${item.title} (x${item.qty})</h5>
+                                    <p class="text-xs text-gold-500 font-semibold">$${item.unitPrice} c/u</p>
+                                </div>
+                                <span class="font-black text-white text-sm">$${item.totalPrice}</span>
+                            </div>
+                            
+                            <div class="text-xs text-gray-400 space-y-0.5 border-t border-neutral-900 pt-1.5">
+                                ${item.details.map(d => `<p>${d}</p>`).join('')}
+                            </div>
+
+                            <button onclick="removeCartItem(${index})" class="text-xs text-red-500 hover:text-red-400 font-bold flex items-center gap-1 pt-1">
+                                <i class="fa-solid fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            cartCount.innerText = totalQty;
+            document.getElementById('cart-total').innerText = `$${totalPrice.toFixed(2)}`;
+        }
+
+        function sendWhatsAppOrder() {
+            if (cart.length === 0) {
+                alert('⚠️ Agrega al menos una hamburguesa antes de enviar el pedido.');
+                return;
+            }
+
+            const name = document.getElementById('client-name').value.trim();
+            const address = document.getElementById('client-address').value.trim();
+
+            if (!name || !address) {
+                alert('⚠️ Por favor ingresa tu nombre y dirección completa para la entrega.');
+                return;
+            }
+
+            const phoneNumber = "527822617627";
+
+            let msg = `🍔 *NUEVO PEDIDO DE BURGER* 🍔\n`;
+            msg += `_____________________________\n\n`;
+            msg += `👤 *Cliente:* ${name}\n`;
+            msg += `📍 *Dirección:* ${address}\n\n`;
+            msg += `📋 *DESGLOSE DEL PEDIDO:*\n\n`;
+
+            let grandTotal = 0;
+
+            cart.forEach((item, idx) => {
+                grandTotal += item.totalPrice;
+                msg += `*${idx + 1}. ${item.title}* (Cant: ${item.qty})\n`;
+                msg += `    Precio: $${item.totalPrice}\n`;
+                item.details.forEach(det => {
+                    msg += `    ${det}\n`;
+                });
+                msg += `\n`;
+            });
+
+            msg += `_____________________________\n`;
+            msg += `💰 *TOTAL A PAGAR:* $${grandTotal.toFixed(2)} MXN\n`;
+            msg += `_____________________________\n\n`;
+            msg += `¡Hola! Confirmo mi pedido para la entrega. Gracias.`;
+
+            const encodedMsg = encodeURIComponent(msg);
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMsg}`;
+
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
